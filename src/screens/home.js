@@ -1,38 +1,65 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar } from 'react-native';
+StatusBar.setBarStyle('light-contect', true);
+StatusBar.setBackgroundColor('#14191f');
 import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 
-const db = SQLite.openDatabase('../database/contacts.db');
-// const db = SQLite.openDatabase('../database/db.sqlite');
+const db = SQLite.openDatabase('contacts.db');
+// const db = SQLite.openDatabase('contact.db');
 
 export default function Home({ navigation }) {
   const [contacts, setContacts] = useState("");
 
-  const newNote = () => {
+  const addContact = () => {
     navigation.navigate('addContact')
   }
 
-  const getData = () => {
-    db.transaction(tx => {
+  const createTableIfNotExist = () => {
+    db.transaction((tx) => {
       tx.executeSql(
-        "SELECT * FROM contacts",
-        [],
-        (_, { rows: { _array } }) => setContacts(_array),
-        () => console.log("error fetching")
-      );
+        'CREATE TABLE IF NOT EXISTS contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, last_name TEXT NOT NULL, number TEXT NOT NULL);'
+      )
     })
-    console.log(contacts);
+
+    //Uncomment only to delete the the database.
+    // db.transaction((tx) => {
+    // tx.executeSql('DELETE * FROM contact;');
+    //   tx.executeSql('DROP TABLE contact;');
+    // })
+
+    getData();
+  }
+
+  const getData = () => {
+    db.transaction((tx) => {
+      tx.executeSql("SELECT * FROM contact;",
+        [],
+        (_, { rows: { _array } }) => setContacts(_array)
+      );
+    });
+    print();
+  }
+
+
+  const print = () => {
+    let data = JSON.stringify(contacts);
+    // console.log('Contactos: ' + data);
+    // console.log(contacts);
+    console.log(data);
   }
 
   useEffect(() => {
-    getData();
-  })
+    createTableIfNotExist();
+    // getData();
+    // console.log(contacts.data)
+  }, [])
 
   return (
     <View style={styles.container}>
       <View>
-        <Button title="Agregar contacto" onPress={newNote} />
+        <Button title="Agregar contacto" onPress={addContact} />
+        {/* <Button title="Data" onPress={getData} /> */}
       </View>
     </View>
   );
@@ -44,6 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#14191f',
   },
   button: {
     alignItems: "center",

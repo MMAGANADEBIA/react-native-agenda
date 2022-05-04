@@ -6,7 +6,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import PhoneInput from 'react-native-phone-number-input';
 import * as SQLite from 'expo-sqlite';
 
-const db = SQLite.openDatabase('../database/contacts.db');
+const db = SQLite.openDatabase('contacts.db');
+// const db = SQLite.openDatabase('contact.db');
 
 export default function Home({ navigation }) {
 
@@ -18,31 +19,24 @@ export default function Home({ navigation }) {
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  const createTableIfNotExist = () => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'CREATE TABLE IF NOT EXIST contacts (name TEXT NOT NULL, last_name, TEXT NOT NULL, number TEXT NOT NULL)'
-      )
-    })
-  }
-
-  useEffect(() => {
-    createTableIfNotExist();
-  })
 
   const accept = () => {
     if (value.length == 10) {
       setValid(true);
       let number = formattedValue;
       if (name != "" && lastName != "") {
-        console.log(name, lastName);
-        db.transaction(tx => {
-          tx.executeSql('INSERT INTO contacts (name, last_name, number) values (?, ?, ?)'[name, lastName, number],);
+        // console.log(name, lastName);
+        db.transaction((tx) => {
+          tx.executeSql('INSERT INTO contact(name, last_name, number) values (?, ?, ?);', [name, lastName, number]);
+          tx.executeSql('SELECT * FROM contact;', [], (_, { rows }) => {
+            console.log(JSON.stringify(rows._array[0].name))
+          })
         })
-        navigation.goBack();
+        // navigation.goBack();
+        navigation.navigate('Home')
       }
-      console.log(formattedValue);
-      console.log(value);
+      // console.log(formattedValue);
+      // console.log(value);
     } else {
       setValid(false);
     }
