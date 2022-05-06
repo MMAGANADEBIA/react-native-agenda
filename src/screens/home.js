@@ -1,10 +1,11 @@
 import { StatusBar } from 'react-native';
 StatusBar.setBarStyle('light-contect', true);
 StatusBar.setBackgroundColor('#14191f');
-import { StyleSheet, Text, View, TouchableOpacity, Button } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert, Button } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-import Accept from '../components/buttons/accept.js';
+// import Accept from '../components/buttons/accept.js';
+import Trash from '../icons/trash-bin.png';
 
 const db = SQLite.openDatabase('contacts.db');
 
@@ -43,29 +44,12 @@ export default function Home({ navigation }) {
 
 
   const print = () => {
-    let data = JSON.stringify(contacts);
-    // console.log('Contactos: ' + data);
-    // console.log(data);
     console.log(contacts);
-    // contacts.forEach(element => {
-    //   console.log(element);
-    // });
-    // contacts.map(index => {
-    //   console.log(index);
-    // })
   }
 
   useEffect(() => {
     createTableIfNotExist();
-    // getData();
-    // console.log(contacts.data)
   }, [])
-
-  // const names = () => {
-  // contacts.forEach(element => {
-  //   return <Text style={styles.text}>{element.name}</Text>
-  // });
-  // }
 
   return (
     <View style={styles.container}>
@@ -77,9 +61,35 @@ export default function Home({ navigation }) {
           {contacts.map(element => {
             return (
               <View key={element.id} style={styles.row}>
-                {/* <Text key={element.name} style={styles.listElement}></Text> */}
+                <Text key={element.name} style={styles.listElement}>{element.name}</Text>
                 <Text key={element.last_name} style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
                 <Text key={element.number} style={styles.number}>{element.number}</Text>
+                <TouchableOpacity onPress={() => {
+                  Alert.alert(
+                    "¿Seguro?",
+                    `¿Quieres eliminar a ${element.name}?`,
+                    [
+                      {
+                        text: "Cancelar",
+                        style: "cancel"
+                      },
+                      {
+                        text: "Aceptar", onPress: () => {
+                          console.log("Aceptar")
+                          db.transaction((tx) => {
+                            tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
+                            tx.executeSql("SELECT * FROM contact;",
+                              [],
+                              (_, { rows: { _array } }) => setContacts(_array)
+                            );
+                          })
+                        }
+                      }
+                    ]
+                  )
+                }}>
+                  <Image style={styles.image} source={Trash} />
+                </TouchableOpacity>
               </View>
             )
           })}
@@ -141,5 +151,9 @@ const styles = StyleSheet.create({
     padding: 18,
     height: 60,
     flexDirection: 'row',
+  },
+  image: {
+    width: 30,
+    height: 30,
   }
 });

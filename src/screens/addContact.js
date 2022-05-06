@@ -33,7 +33,7 @@ export default function Home({ navigation }) {
           })
         })
         // navigation.goBack();
-        navigation.navigate('Home')
+        // navigation.navigate('Home')
       }
       // console.log(formattedValue);
       // console.log(value);
