@@ -6,6 +6,7 @@ import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 // import Accept from '../components/buttons/accept.js';
 import Trash from '../icons/trash-bin.png';
+import Edit from '../icons/pluma-de-la-pluma.png';
 
 const db = SQLite.openDatabase('contacts.db');
 
@@ -15,6 +16,10 @@ export default function Home({ navigation }) {
   const addContact = () => {
     navigation.navigate('addContact')
   }
+
+  // const updateContact = () => {
+  //   navigation.navigate('updateContact')
+  // }
 
   const createTableIfNotExist = () => {
     db.transaction((tx) => {
@@ -64,6 +69,11 @@ export default function Home({ navigation }) {
                 <Text key={element.name} style={styles.listElement}>{element.name}</Text>
                 <Text key={element.last_name} style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
                 <Text key={element.number} style={styles.number}>{element.number}</Text>
+                <TouchableOpacity onPress={() => {
+                  navigation.navigate('updateContact', { id: element.id })
+                }}>
+                  <Image style={styles.image} source={Edit} />
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
                   Alert.alert(
                     "¿Seguro?",

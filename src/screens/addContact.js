@@ -1,8 +1,8 @@
 import { StatusBar } from 'react-native';
 StatusBar.setBarStyle('light-contect', true);
 StatusBar.setBackgroundColor('#14191f');
-import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useState, useRef, useEffect } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useRef } from 'react';
 import PhoneInput from 'react-native-phone-number-input';
 import * as SQLite from 'expo-sqlite';
 
@@ -33,7 +33,7 @@ export default function Home({ navigation }) {
           })
         })
         // navigation.goBack();
-        // navigation.navigate('Home')
+        navigation.navigate('Home')
       }
       // console.log(formattedValue);
       // console.log(value);
