@@ -41,7 +41,18 @@ export default function UpdateContact({ navigation }) {
   }
 
   const accept = () => {
-    console.log("accept");
+    let number = formattedValue;
+    db.transaction(
+      (tx) => {
+        tx.executeSql(`UPDATE contact SET name = ?, last_name = ?, number = ? WHERE id = ?;`, [
+          name,
+          lastName,
+          number,
+          id,
+        ]);
+      }
+    )
+    navigation.navigate('Home')
   }
 
   useEffect(() => {
@@ -52,7 +63,7 @@ export default function UpdateContact({ navigation }) {
     <View style={styles.container}>
       <ScrollView style={styles.container}>
         <Text style={styles.header}>Editar contact</Text>
-        {/* <Text style={styles.header}>{contact[0].name}</Text> */}
+        <Text style={styles.header}>{contact[0].name}</Text>
         <View style={styles.usableScreen}>
           <View style={styles.form}>
             <Text style={styles.text}>Nombre</Text>
