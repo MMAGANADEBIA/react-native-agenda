@@ -1,4 +1,4 @@
-import { StatusBar } from 'react-native';
+import { StatusBar, Alert } from 'react-native';
 StatusBar.setBarStyle('light-contect', true);
 StatusBar.setBackgroundColor('#14191f');
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
@@ -21,25 +21,31 @@ export default function Home({ navigation }) {
 
 
   const accept = () => {
-    if (value.length == 10) {
-      setValid(true);
-      let number = formattedValue;
-      if (name != "" && lastName != "") {
-        // console.log(name, lastName);
+    let number = formattedValue;
+    if (name != "" && lastName != "") {
+      if (value.length == 10) {
+        setValid(true);
+        navigation.navigate('Home')
         db.transaction((tx) => {
-          tx.executeSql('INSERT INTO contact(name, last_name, number) values (?, ?, ?);', [name, lastName, number]);
+          tx.executeSql('INSERT INTO contact(name, last_name, number, short_number) values (?, ?, ?, ?);', [name, lastName, number, value]);
           tx.executeSql('SELECT * FROM contact;', [], (_, { rows }) => {
             console.log(JSON.stringify(rows._array[0].name))
           })
         })
-        // navigation.goBack();
-        navigation.navigate('Home')
+      } else {
+        setValid(false);
+        Alert.alert(
+          "Número inválido",
+          "El número debe de tener 10 dígitos",
+        )
       }
-      // console.log(formattedValue);
-      // console.log(value);
     } else {
-      setValid(false);
+      Alert.alert(
+        "Campos vacíos",
+        "Llene los campos con datos válidos",
+      )
     }
+
   }
 
   const cancel = () => {

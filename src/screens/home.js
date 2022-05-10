@@ -1,7 +1,7 @@
 import { StatusBar } from 'react-native';
 StatusBar.setBarStyle('light-contect', true);
 StatusBar.setBackgroundColor('#14191f');
-import { StyleSheet, Text, View, TouchableOpacity, Image, Alert, Button } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 // import Accept from '../components/buttons/accept.js';
@@ -11,7 +11,7 @@ import Edit from '../icons/pluma-de-la-pluma.png';
 const db = SQLite.openDatabase('contacts.db');
 
 export default function Home({ navigation }) {
-  const [contacts, setContacts] = useState("");
+  const [contacts, setContacts] = useState([]);
 
   const addContact = () => {
     navigation.navigate('addContact')
@@ -24,36 +24,38 @@ export default function Home({ navigation }) {
   const createTableIfNotExist = () => {
     db.transaction((tx) => {
       tx.executeSql(
-        'CREATE TABLE IF NOT EXISTS contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, last_name TEXT NOT NULL, number TEXT NOT NULL);'
-      )
+        'CREATE TABLE IF NOT EXISTS contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, last_name TEXT NOT NULL, number TEXT NOT NULL, short_number TEXT NOT NULL);')
     })
 
     //Uncomment only to delete the the database.
     // db.transaction((tx) => {
-    // tx.executeSql('DELETE * FROM contact;');
+    //   tx.executeSql('DELETE * FROM contact;');
     //   tx.executeSql('DROP TABLE contact;');
     // })
 
-    getData();
+    // getData();
   }
 
-  const getData = () => {
+  // const getData = () => {
+  //   db.transaction((tx) => {
+  //     tx.executeSql("SELECT * FROM contact;",
+  //       [],
+  //       (_, { rows: { _array } }) => setContacts(_array)
+  //     );
+  //   });
+  //   print();
+  // }
+
+
+  useEffect(() => {
+    createTableIfNotExist();
     db.transaction((tx) => {
       tx.executeSql("SELECT * FROM contact;",
         [],
         (_, { rows: { _array } }) => setContacts(_array)
       );
     });
-    print();
-  }
-
-
-  const print = () => {
     console.log(contacts);
-  }
-
-  useEffect(() => {
-    createTableIfNotExist();
   }, [])
 
   return (
@@ -66,40 +68,45 @@ export default function Home({ navigation }) {
           {contacts.map(element => {
             return (
               <View key={element.id} style={styles.row}>
-                <Text key={element.name} style={styles.listElement}>{element.name}</Text>
-                <Text key={element.last_name} style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
-                <Text key={element.number} style={styles.number}>{element.number}</Text>
-                <TouchableOpacity onPress={() => {
-                  navigation.navigate('updateContact', { id: element.id })
-                }}>
-                  <Image style={styles.image} source={Edit} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                  Alert.alert(
-                    "¿Seguro?",
-                    `¿Quieres eliminar a ${element.name}?`,
-                    [
-                      {
-                        text: "Cancelar",
-                        style: "cancel"
-                      },
-                      {
-                        text: "Aceptar", onPress: () => {
-                          console.log("Aceptar")
-                          db.transaction((tx) => {
-                            tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
-                            tx.executeSql("SELECT * FROM contact;",
-                              [],
-                              (_, { rows: { _array } }) => setContacts(_array)
-                            );
-                          })
+                <Text style={styles.listElement}>{element.name}</Text>
+                <Text style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
+                <Text style={styles.number}>{element.number}</Text>
+
+                <View style={styles.icons}>
+                  <TouchableOpacity onPress={() => {
+                    navigation.navigate('updateContact', { id: element.id })
+                  }}>
+                    <Image style={styles.image} source={Edit} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => {
+                    Alert.alert(
+                      "¿Seguro?",
+                      `¿Quieres eliminar a ${element.name}?`,
+                      [
+                        {
+                          text: "Cancelar",
+                          style: "cancel"
+                        },
+                        {
+                          text: "Aceptar", onPress: () => {
+                            console.log("Aceptar")
+                            db.transaction((tx) => {
+                              tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
+                              tx.executeSql("SELECT * FROM contact;",
+                                [],
+                                (_, { rows: { _array } }) => setContacts(_array)
+                              );
+                            })
+                          }
                         }
-                      }
-                    ]
-                  )
-                }}>
-                  <Image style={styles.image} source={Trash} />
-                </TouchableOpacity>
+                      ]
+                    )
+                  }}>
+                    <Image style={styles.image} source={Trash} />
+                  </TouchableOpacity>
+                </View>
+
               </View>
             )
           })}
@@ -150,9 +157,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   listContainer: {
-    alignSelf: 'stretch',
+    // alignSelf: 'stretch',
     // textAlign: 'left',
     marginLeft: 10,
+    marginRight: 10,
   },
   row: {
     backgroundColor: '#FFF',
@@ -160,10 +168,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 18,
     height: 60,
+    // width: 420,
     flexDirection: 'row',
+
   },
   image: {
     width: 30,
     height: 30,
+  },
+  icons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    // width: 200,
+    position: 'absolute',
+    padding: 18,
+    marginLeft: 300,
   }
 });
