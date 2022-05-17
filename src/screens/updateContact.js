@@ -20,85 +20,106 @@ export default function UpdateContact({ navigation }) {
     navigation.goBack();
   }
 
-  // const getData = () => {
-  //   db.transaction((tx) => {
-  //     tx.executeSql("SELECT * FROM contact WHERE id = ?;",
-  //       [id],
-  //       (_, { rows: { _array } }) => setContact(_array)
-  //     );
-  //   });
-  //   print();
-  // }
-
-  // const print = () => {
-  //   console.log(id);
-  //   console.log(contact);
-  // }
 
   const accept = () => {
     let number = formattedValue;
     let shortNumber = value;
-    if (name != "" && lastName != "") {
-      if (shortNumber.length == 10) {
-        db.transaction(
-          (tx) => {
-            tx.executeSql(`UPDATE contact SET name = ?, last_name = ?, number = ?, short_number = ? WHERE id = ?;`, [
-              name,
-              lastName,
-              number,
-              shortNumber,
-              id,
-            ]);
+    Alert.alert(
+      "¿Actualizar?",
+      "Los datos modificados serán actualizados. Esta acción es irreversible.",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Aceptar", onPress: () => {
+            contact.map(element => {
+
+              if (name == "") {
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql(`UPDATE contact SET name = ? WHERE id = ?;`, [
+                      element.name,
+                      element.id,
+                    ]);
+                  }
+                )
+              } else {
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql(`UPDATE contact SET name = ? WHERE id = ?;`, [
+                      name,
+                      element.id,
+                    ]);
+                  }
+                )
+              }
+
+              if (lastName == "") {
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql(`UPDATE contact SET last_name = ? WHERE id = ?;`, [
+                      element.last_name,
+                      element.id,
+                    ]);
+                  }
+                )
+              } else {
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql(`UPDATE contact SET last_name = ? WHERE id = ?;`, [
+                      lastName,
+                      element.id,
+                    ]);
+                  }
+                )
+              }
+
+              if (shortNumber == "") {
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql(`UPDATE contact SET number = ?, short_number = ? WHERE id = ?;`, [
+                      element.number,
+                      element.short_number,
+                      element.id,
+                    ]);
+                  }
+                )
+              } else if (shortNumber.length == 10) {
+                db.transaction(
+                  (tx) => {
+                    tx.executeSql(`UPDATE contact SET number = ?, short_number = ? WHERE id = ?;`, [
+                      number,
+                      shortNumber,
+                      element.id,
+                    ]);
+                  }
+                )
+              }
+
+
+            })
+
+            navigation.navigate('Home');
+
           }
-        )
-        navigation.navigate('Home')
-      } else {
-        Alert.alert(
-          "Número inválido",
-          "El número de teléfono debe de tener 10 digitos",
-        )
-      }
-    } else {
-      Alert.alert(
-        "Campos vacíos",
-        "Llene los campos con datos válidos",
-      )
-    }
+        }
+      ]
+    )
+
 
   }
 
 
   useEffect(() => {
-    // getData();
     db.transaction((tx) => {
       tx.executeSql("SELECT * FROM contact WHERE id = ?;",
         [id],
         (_, { rows: { _array } }) => setContact(_array)
       );
     });
-    // print();
-    // console.log(contact[0]);
-    // contact.map(element => {
-    //   console.log(element);
-    // })
-    // setName(contact[0].name);
-    // setLastName(contact[0].lastName);
-    // setFormattedValue(contact[0].number);
-    // setValue(contact[0].short_number);
-    addDefaultValues();
   }, [])
-
-  // const addDefaultValues = () => {
-  //   contact.map(element => {
-  //     console.log(element.name);
-  //     console.log(element.last_name);
-  // setName(element.name);
-  // setLastName(element.last_name);
-  // setFormattedValue(element.number);
-  // setValue(element.short_number);
-  //   })
-    
-  // }
 
 
   return (
@@ -107,10 +128,6 @@ export default function UpdateContact({ navigation }) {
         <Text style={styles.header}>Editar contacto</Text>
 
         {contact.map(element => {
-          // setName(element.name);
-          // setLastName(element.last_name);
-          // setFormattedValue(element.number);
-          // setValue(element.short_number);
           return (
             <View key={element.id}>
               <Text style={styles.header} key={element.name} >{element.name} {element.last_name.charAt(0)}.</Text>
@@ -154,9 +171,6 @@ export default function UpdateContact({ navigation }) {
         <View style={styles.usableScreen}>
           <View style={styles.form}>
 
-
-
-
           </View>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={[styles.button, styles.cancel]} onPress={cancel}>
@@ -168,7 +182,6 @@ export default function UpdateContact({ navigation }) {
           </View>
         </View>
       </ScrollView>
-
 
     </View>
   );
