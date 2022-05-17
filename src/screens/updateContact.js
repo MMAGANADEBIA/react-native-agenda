@@ -7,11 +7,11 @@ import React, { useState, useRef, useEffect } from 'react';
 const db = SQLite.openDatabase('contacts.db');
 
 export default function UpdateContact({ navigation }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState([]);
   const [contact, setContact] = useState([]);
-  const [formattedValue, setFormattedValue] = useState("");
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [formattedValue, setFormattedValue] = useState([]);
+  const [name, setName] = useState([]);
+  const [lastName, setLastName] = useState([]);
   const phoneInput = useRef < PhoneInput > (null);
   const id = navigation.state.params.id;
 
@@ -77,19 +77,27 @@ export default function UpdateContact({ navigation }) {
       );
     });
     // print();
-    console.log(contact[0]);
-    // addDefaultValues();
+    // console.log(contact[0]);
+    // contact.map(element => {
+    //   console.log(element);
+    // })
+    // setName(contact[0].name);
+    // setLastName(contact[0].lastName);
+    // setFormattedValue(contact[0].number);
+    // setValue(contact[0].short_number);
+    addDefaultValues();
   }, [])
 
   // const addDefaultValues = () => {
   //   contact.map(element => {
   //     console.log(element.name);
   //     console.log(element.last_name);
-  //     setName(element.name);
-  //     setLastName(element.last_name);
-  //     setFormattedValue(element.number);
-  //     setValue(element.short_number);
+  // setName(element.name);
+  // setLastName(element.last_name);
+  // setFormattedValue(element.number);
+  // setValue(element.short_number);
   //   })
+    
   // }
 
 
@@ -97,6 +105,7 @@ export default function UpdateContact({ navigation }) {
     <View style={styles.container}>
       <ScrollView style={styles.container}>
         <Text style={styles.header}>Editar contacto</Text>
+
         {contact.map(element => {
           // setName(element.name);
           // setLastName(element.last_name);
