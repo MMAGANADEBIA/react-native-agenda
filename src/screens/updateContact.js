@@ -17,7 +17,8 @@ export default function UpdateContact({ navigation }) {
 
 
   const cancel = () => {
-    navigation.goBack();
+    // navigation.goBack();
+    navigation.navigate('Home')
   }
 
 

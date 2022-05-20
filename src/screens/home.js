@@ -7,19 +7,17 @@ import { useEffect, useState } from 'react';
 // import Accept from '../components/buttons/accept.js';
 import Trash from '../icons/trash-bin.png';
 import Edit from '../icons/pluma-de-la-pluma.png';
+import { TextInput } from 'react-native-gesture-handler';
 
 const db = SQLite.openDatabase('contacts.db');
 
 export default function Home({ navigation }) {
   const [contacts, setContacts] = useState([]);
+  const [search, setSearch] = useState("");
 
   const addContact = () => {
     navigation.navigate('addContact')
   }
-
-  // const updateContact = () => {
-  //   navigation.navigate('updateContact')
-  // }
 
   const createTableIfNotExist = () => {
     db.transaction((tx) => {
@@ -27,25 +25,15 @@ export default function Home({ navigation }) {
         'CREATE TABLE IF NOT EXISTS contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, last_name TEXT NOT NULL, number TEXT NOT NULL, short_number TEXT NOT NULL);')
     })
 
-    //Uncomment only to delete the the database.
-    // db.transaction((tx) => {
-    //   tx.executeSql('DELETE * FROM contact;');
-    //   tx.executeSql('DROP TABLE contact;');
-    // })
-
-    // getData();
   }
 
-  // const getData = () => {
-  //   db.transaction((tx) => {
-  //     tx.executeSql("SELECT * FROM contact;",
-  //       [],
-  //       (_, { rows: { _array } }) => setContacts(_array)
-  //     );
-  //   });
-  //   print();
-  // }
-
+  const searchContact = (text) => {
+    contacts.map(element => {
+      if (element.name.includes(text) || element.last_name.includes(text) || element.number.includes(text)) {
+        console.log(element);
+      }
+    })
+  }
 
   useEffect(() => {
     createTableIfNotExist();
@@ -55,15 +43,21 @@ export default function Home({ navigation }) {
         (_, { rows: { _array } }) => setContacts(_array)
       );
     });
-    console.log(contacts);
-  }, [])
+  }, [contacts]);
 
+  //TODO: search input.
+  //TODO: copy number on touch it.
   return (
     <View style={styles.container}>
       <View>
         <TouchableOpacity style={[styles.button, styles.accept]} onPress={addContact} >
           <Text style={styles.buttonText}>Nuevo contacto</Text>
         </TouchableOpacity>
+        <TextInput style={styles.input} placeholder="Buscar"
+          onChangeText={(text) => {
+            searchContact(text);
+          }}
+        />
         <View style={styles.listContainer}>
           {contacts.map(element => {
             return (
@@ -183,5 +177,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     padding: 18,
     marginLeft: 300,
-  }
+  },
+  input: {
+    backgroundColor: '#FFF',
+    width: 300,
+    height: 60,
+    marginLeft: 70,
+    borderRadius: 10,
+    padding: 10,
+    fontSize: 20,
+    marginTop: 30,
+  },
+
 });
