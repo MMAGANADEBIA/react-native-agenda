@@ -8,12 +8,13 @@ import { useEffect, useState } from 'react';
 import Trash from '../icons/trash-bin.png';
 import Edit from '../icons/pluma-de-la-pluma.png';
 import { TextInput } from 'react-native-gesture-handler';
+import * as Clipboard from 'expo-clipboard';
+import Toast from 'react-native-simple-toast';
 
 const db = SQLite.openDatabase('contacts.db');
 
 export default function Home({ navigation }) {
   const [contacts, setContacts] = useState([]);
-  const [search, setSearch] = useState("");
 
   const addContact = () => {
     navigation.navigate('addContact')
@@ -45,14 +46,15 @@ export default function Home({ navigation }) {
     });
   }, [contacts]);
 
+
   //TODO: search input.
   //TODO: copy number on touch it.
   return (
     <View style={styles.container}>
-      <View>
-        <TouchableOpacity style={[styles.button, styles.accept]} onPress={addContact} >
-          <Text style={styles.buttonText}>Nuevo contacto</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, styles.accept, styles.newContact]} onPress={addContact} >
+        <Text style={styles.buttonText}>Nuevo contacto</Text>
+      </TouchableOpacity>
+      <View style={styles.componentElements}>
         <TextInput style={styles.input} placeholder="Buscar"
           onChangeText={(text) => {
             searchContact(text);
@@ -62,10 +64,15 @@ export default function Home({ navigation }) {
           {contacts.map(element => {
             return (
               <View key={element.id} style={styles.row}>
+
                 <Text style={styles.listElement}>{element.name}</Text>
                 <Text style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
-                <Text style={styles.number}>{element.number}</Text>
-
+                <TouchableOpacity onPress={() => {
+                  Clipboard.setString(element.number)
+                  Toast.show(`Número copiado: ${element.number}`);
+                }}>
+                  <Text style={styles.number}>{element.number}</Text>
+                </TouchableOpacity>
                 <View style={styles.icons}>
                   <TouchableOpacity onPress={() => {
                     navigation.navigate('updateContact', { id: element.id })
@@ -188,5 +195,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 30,
   },
-
+  newContact: {
+    position: 'relative',
+    // position: 'absolute',
+    // marginTop: '100%',
+  },
+  componentElements: {
+    position: 'relative',
+  }
 });
