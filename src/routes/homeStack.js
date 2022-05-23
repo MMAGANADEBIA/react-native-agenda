@@ -4,7 +4,6 @@ import Home from '../screens/home.js';
 import AddContact from '../screens/addContact.js';
 import UpdateContact from '../screens/updateContact.js';
 
-
 const screens = {
   Home: {
     screen: Home,

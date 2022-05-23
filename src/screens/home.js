@@ -4,7 +4,6 @@ StatusBar.setBackgroundColor('#14191f');
 import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
-// import Accept from '../components/buttons/accept.js';
 import Trash from '../icons/trash-bin.png';
 import Edit from '../icons/pluma-de-la-pluma.png';
 import { TextInput } from 'react-native-gesture-handler';
@@ -15,6 +14,8 @@ const db = SQLite.openDatabase('contacts.db');
 
 export default function Home({ navigation }) {
   const [contacts, setContacts] = useState([]);
+  const [search, setSearch] = useState([]);
+  const [searchAvailable, setSearchAvaiblable] = useState(false);
 
   const addContact = () => {
     navigation.navigate('addContact')
@@ -28,14 +29,6 @@ export default function Home({ navigation }) {
 
   }
 
-  const searchContact = (text) => {
-    contacts.map(element => {
-      if (element.name.includes(text) || element.last_name.includes(text) || element.number.includes(text)) {
-        console.log(element);
-      }
-    })
-  }
-
   useEffect(() => {
     createTableIfNotExist();
     db.transaction((tx) => {
@@ -47,8 +40,6 @@ export default function Home({ navigation }) {
   }, [contacts]);
 
 
-  //TODO: search input.
-  //TODO: copy number on touch it.
   return (
     <View style={styles.container}>
       <TouchableOpacity style={[styles.button, styles.accept, styles.newContact]} onPress={addContact} >
@@ -57,59 +48,128 @@ export default function Home({ navigation }) {
       <View style={styles.componentElements}>
         <TextInput style={styles.input} placeholder="Buscar"
           onChangeText={(text) => {
-            searchContact(text);
+            if (text.length > 0) {
+              setSearchAvaiblable(true);
+              db.transaction((tx) => {
+                tx.executeSql(`SELECT * FROM contact WHERE name LIKE ?;`,
+                  ["%" + text + "%"],
+                  (_, { rows: { _array } }) => setSearch(_array)
+                );
+              });
+            } else {
+              setSearchAvaiblable(false);
+            }
           }}
         />
+
+        <View style={styles.listContainer} >
+          {search.map(element => {
+            if (searchAvailable) {
+              return (
+                <View key={element.id} style={styles.row}>
+
+                  <Text key={element.name} style={styles.listElement}>{element.name}</Text>
+                  <Text key={element.last_name} style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
+                  <TouchableOpacity onPress={() => {
+                    Clipboard.setString(element.number)
+                    Toast.show(`Número copiado: ${element.number}`);
+                  }}>
+                    <Text style={styles.number}>{element.number}</Text>
+                  </TouchableOpacity>
+                  <View style={styles.icons}>
+                    <TouchableOpacity onPress={() => {
+                      navigation.navigate('updateContact', { id: element.id })
+                    }}>
+                      <Image style={styles.image} source={Edit} />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => {
+                      Alert.alert(
+                        "¿Seguro?",
+                        `¿Quieres eliminar a ${element.name}?`,
+                        [
+                          {
+                            text: "Cancelar",
+                            style: "cancel"
+                          },
+                          {
+                            text: "Aceptar", onPress: () => {
+                              console.log("Aceptar")
+                              db.transaction((tx) => {
+                                tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
+                                tx.executeSql("SELECT * FROM contact;",
+                                  [],
+                                  (_, { rows: { _array } }) => setContacts(_array)
+                                );
+                              })
+                            }
+                          }
+                        ]
+                      )
+                    }}>
+                      <Image style={styles.image} source={Trash} />
+                    </TouchableOpacity>
+                  </View>
+
+                </View>
+              )
+            }
+          })}
+        </View>
+
         <View style={styles.listContainer}>
           {contacts.map(element => {
-            return (
-              <View key={element.id} style={styles.row}>
+            if (!searchAvailable) {
+              return (
+                <View key={element.id} style={styles.row}>
 
-                <Text style={styles.listElement}>{element.name}</Text>
-                <Text style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
-                <TouchableOpacity onPress={() => {
-                  Clipboard.setString(element.number)
-                  Toast.show(`Número copiado: ${element.number}`);
-                }}>
-                  <Text style={styles.number}>{element.number}</Text>
-                </TouchableOpacity>
-                <View style={styles.icons}>
+                  <Text style={styles.listElement}>{element.name}</Text>
+                  <Text style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
                   <TouchableOpacity onPress={() => {
-                    navigation.navigate('updateContact', { id: element.id })
+                    Clipboard.setString(element.number)
+                    Toast.show(`Número copiado: ${element.number}`);
                   }}>
-                    <Image style={styles.image} source={Edit} />
+                    <Text style={styles.number}>{element.number}</Text>
                   </TouchableOpacity>
+                  <View style={styles.icons}>
+                    <TouchableOpacity onPress={() => {
+                      navigation.navigate('updateContact', { id: element.id })
+                    }}>
+                      <Image style={styles.image} source={Edit} />
+                    </TouchableOpacity>
 
-                  <TouchableOpacity onPress={() => {
-                    Alert.alert(
-                      "¿Seguro?",
-                      `¿Quieres eliminar a ${element.name}?`,
-                      [
-                        {
-                          text: "Cancelar",
-                          style: "cancel"
-                        },
-                        {
-                          text: "Aceptar", onPress: () => {
-                            console.log("Aceptar")
-                            db.transaction((tx) => {
-                              tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
-                              tx.executeSql("SELECT * FROM contact;",
-                                [],
-                                (_, { rows: { _array } }) => setContacts(_array)
-                              );
-                            })
+                    <TouchableOpacity onPress={() => {
+                      Alert.alert(
+                        "¿Seguro?",
+                        `¿Quieres eliminar a ${element.name}?`,
+                        [
+                          {
+                            text: "Cancelar",
+                            style: "cancel"
+                          },
+                          {
+                            text: "Aceptar", onPress: () => {
+                              console.log("Aceptar")
+                              db.transaction((tx) => {
+                                tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
+                                tx.executeSql("SELECT * FROM contact;",
+                                  [],
+                                  (_, { rows: { _array } }) => setContacts(_array)
+                                );
+                              })
+                            }
                           }
-                        }
-                      ]
-                    )
-                  }}>
-                    <Image style={styles.image} source={Trash} />
-                  </TouchableOpacity>
-                </View>
+                        ]
+                      )
+                    }}>
+                      <Image style={styles.image} source={Trash} />
+                    </TouchableOpacity>
+                  </View>
 
-              </View>
-            )
+                </View>
+              )
+            }
+
           })}
         </View>
       </View>
@@ -196,11 +256,11 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   newContact: {
-    position: 'relative',
+    // position: 'relative',
     // position: 'absolute',
     // marginTop: '100%',
   },
   componentElements: {
-    position: 'relative',
+    // position: 'relative',
   }
 });
