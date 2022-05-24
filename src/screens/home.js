@@ -6,6 +6,7 @@ import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
 import Trash from '../icons/trash-bin.png';
 import Edit from '../icons/pluma-de-la-pluma.png';
+import Plus from '../icons/plus.png';
 import { TextInput } from 'react-native-gesture-handler';
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-simple-toast';
@@ -42,10 +43,9 @@ export default function Home({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={[styles.button, styles.accept, styles.newContact]} onPress={addContact} >
-        <Text style={styles.buttonText}>Nuevo contacto</Text>
-      </TouchableOpacity>
-      <View style={styles.componentElements}>
+
+      <View styles={styles.inlineElements}>
+
         <TextInput style={styles.input} placeholder="Buscar"
           onChangeText={(text) => {
             if (text.length > 0) {
@@ -62,116 +62,121 @@ export default function Home({ navigation }) {
           }}
         />
 
-        <View style={styles.listContainer} >
-          {search.map(element => {
-            if (searchAvailable) {
-              return (
-                <View key={element.id} style={styles.row}>
+        <TouchableOpacity style={styles.addContact} onPress={addContact} >
+          <Image style={styles.plus} source={Plus} />
+        </TouchableOpacity>
 
-                  <Text key={element.name} style={styles.listElement}>{element.name}</Text>
-                  <Text key={element.last_name} style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
+      </View>
+
+      <View style={styles.listContainer} >
+        {search.map(element => {
+          if (searchAvailable) {
+            return (
+              <View key={element.id} style={styles.row}>
+
+                <Text key={element.name} style={styles.listElement}>{element.name}</Text>
+                <Text key={element.last_name} style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
+                <TouchableOpacity onPress={() => {
+                  Clipboard.setString(element.number)
+                  Toast.show(`Número copiado: ${element.number}`);
+                }}>
+                  <Text style={styles.number}>{element.number}</Text>
+                </TouchableOpacity>
+                <View style={styles.icons}>
                   <TouchableOpacity onPress={() => {
-                    Clipboard.setString(element.number)
-                    Toast.show(`Número copiado: ${element.number}`);
+                    navigation.navigate('updateContact', { id: element.id })
                   }}>
-                    <Text style={styles.number}>{element.number}</Text>
+                    <Image style={styles.image} source={Edit} />
                   </TouchableOpacity>
-                  <View style={styles.icons}>
-                    <TouchableOpacity onPress={() => {
-                      navigation.navigate('updateContact', { id: element.id })
-                    }}>
-                      <Image style={styles.image} source={Edit} />
-                    </TouchableOpacity>
 
-                    <TouchableOpacity onPress={() => {
-                      Alert.alert(
-                        "¿Seguro?",
-                        `¿Quieres eliminar a ${element.name}?`,
-                        [
-                          {
-                            text: "Cancelar",
-                            style: "cancel"
-                          },
-                          {
-                            text: "Aceptar", onPress: () => {
-                              console.log("Aceptar")
-                              db.transaction((tx) => {
-                                tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
-                                tx.executeSql("SELECT * FROM contact;",
-                                  [],
-                                  (_, { rows: { _array } }) => setContacts(_array)
-                                );
-                              })
-                            }
-                          }
-                        ]
-                      )
-                    }}>
-                      <Image style={styles.image} source={Trash} />
-                    </TouchableOpacity>
-                  </View>
-
-                </View>
-              )
-            }
-          })}
-        </View>
-
-        <View style={styles.listContainer}>
-          {contacts.map(element => {
-            if (!searchAvailable) {
-              return (
-                <View key={element.id} style={styles.row}>
-
-                  <Text style={styles.listElement}>{element.name}</Text>
-                  <Text style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
                   <TouchableOpacity onPress={() => {
-                    Clipboard.setString(element.number)
-                    Toast.show(`Número copiado: ${element.number}`);
-                  }}>
-                    <Text style={styles.number}>{element.number}</Text>
-                  </TouchableOpacity>
-                  <View style={styles.icons}>
-                    <TouchableOpacity onPress={() => {
-                      navigation.navigate('updateContact', { id: element.id })
-                    }}>
-                      <Image style={styles.image} source={Edit} />
-                    </TouchableOpacity>
-
-                    <TouchableOpacity onPress={() => {
-                      Alert.alert(
-                        "¿Seguro?",
-                        `¿Quieres eliminar a ${element.name}?`,
-                        [
-                          {
-                            text: "Cancelar",
-                            style: "cancel"
-                          },
-                          {
-                            text: "Aceptar", onPress: () => {
-                              console.log("Aceptar")
-                              db.transaction((tx) => {
-                                tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
-                                tx.executeSql("SELECT * FROM contact;",
-                                  [],
-                                  (_, { rows: { _array } }) => setContacts(_array)
-                                );
-                              })
-                            }
+                    Alert.alert(
+                      "¿Seguro?",
+                      `¿Quieres eliminar a ${element.name}?`,
+                      [
+                        {
+                          text: "Cancelar",
+                          style: "cancel"
+                        },
+                        {
+                          text: "Aceptar", onPress: () => {
+                            console.log("Aceptar")
+                            db.transaction((tx) => {
+                              tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
+                              tx.executeSql("SELECT * FROM contact;",
+                                [],
+                                (_, { rows: { _array } }) => setContacts(_array)
+                              );
+                            })
                           }
-                        ]
-                      )
-                    }}>
-                      <Image style={styles.image} source={Trash} />
-                    </TouchableOpacity>
-                  </View>
-
+                        }
+                      ]
+                    )
+                  }}>
+                    <Image style={styles.image} source={Trash} />
+                  </TouchableOpacity>
                 </View>
-              )
-            }
 
-          })}
-        </View>
+              </View>
+            )
+          }
+        })}
+      </View>
+
+      <View style={styles.listContainer}>
+        {contacts.map(element => {
+          if (!searchAvailable) {
+            return (
+              <View key={element.id} style={styles.row}>
+
+                <Text style={styles.listElement}>{element.name}</Text>
+                <Text style={styles.listElement} >{element.last_name.charAt(0)}.</Text>
+                <TouchableOpacity onPress={() => {
+                  Clipboard.setString(element.number)
+                  Toast.show(`Número copiado: ${element.number}`);
+                }}>
+                  <Text style={styles.number}>{element.number}</Text>
+                </TouchableOpacity>
+                <View style={styles.icons}>
+                  <TouchableOpacity onPress={() => {
+                    navigation.navigate('updateContact', { id: element.id })
+                  }}>
+                    <Image style={styles.image} source={Edit} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity onPress={() => {
+                    Alert.alert(
+                      "¿Seguro?",
+                      `¿Quieres eliminar a ${element.name}?`,
+                      [
+                        {
+                          text: "Cancelar",
+                          style: "cancel"
+                        },
+                        {
+                          text: "Aceptar", onPress: () => {
+                            console.log("Aceptar")
+                            db.transaction((tx) => {
+                              tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
+                              tx.executeSql("SELECT * FROM contact;",
+                                [],
+                                (_, { rows: { _array } }) => setContacts(_array)
+                              );
+                            })
+                          }
+                        }
+                      ]
+                    )
+                  }}>
+                    <Image style={styles.image} source={Trash} />
+                  </TouchableOpacity>
+                </View>
+
+              </View>
+            )
+          }
+
+        })}
       </View>
     </View>
   );
@@ -189,26 +194,7 @@ const styles = StyleSheet.create({
   text: {
     color: '#FFF',
   },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 20,
-  },
-  button: {
-    width: 250,
-    height: 60,
-    alignItems: "center",
-    padding: 15,
-    borderRadius: 10,
-    color: '#FFF',
-    marginLeft: 10,
-  },
-  accept: {
-    backgroundColor: '#008000'
-  },
   listElement: {
-    // backgroundColor: '#FFF',
-    // marginTop: 5,
-    // marginBottom: 5,
     color: '#000',
     fontSize: 18,
     marginLeft: 10,
@@ -218,8 +204,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   listContainer: {
-    // alignSelf: 'stretch',
-    // textAlign: 'left',
     marginLeft: 10,
     marginRight: 10,
   },
@@ -229,38 +213,42 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 18,
     height: 60,
-    // width: 420,
     flexDirection: 'row',
-
   },
   image: {
     width: 30,
     height: 30,
   },
+  plus: {
+    width: 50,
+    height: 50,
+  },
   icons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    // width: 200,
     position: 'absolute',
     padding: 18,
     marginLeft: 300,
   },
   input: {
     backgroundColor: '#FFF',
-    width: 300,
+    width: 320,
     height: 60,
-    marginLeft: 70,
+    marginLeft: 10,
     borderRadius: 10,
     padding: 10,
     fontSize: 20,
-    marginTop: 30,
+    // marginTop: 30,
   },
-  newContact: {
-    // position: 'relative',
-    // position: 'absolute',
-    // marginTop: '100%',
+  addContact: {
+    position: 'absolute',
+    marginTop: 5,
+    marginLeft: '80%',
   },
-  componentElements: {
-    // position: 'relative',
+  inlineElements: {
+    // flex: 1,
+    // flexDirection: 'row',
+    // flex: 2,
+    // flexDirection: 'row',
   }
 });
