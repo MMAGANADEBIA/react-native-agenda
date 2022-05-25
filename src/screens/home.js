@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import Trash from '../icons/trash-bin.png';
 import Edit from '../icons/pluma-de-la-pluma.png';
 import Plus from '../icons/plus.png';
+import Search from '../icons/search.png';
 import { TextInput } from 'react-native-gesture-handler';
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-simple-toast';
@@ -46,21 +47,24 @@ export default function Home({ navigation }) {
 
       <View styles={styles.inlineElements}>
 
-        <TextInput style={styles.input} placeholder="Buscar"
-          onChangeText={(text) => {
-            if (text.length > 0) {
-              setSearchAvaiblable(true);
-              db.transaction((tx) => {
-                tx.executeSql(`SELECT * FROM contact WHERE name LIKE ?;`,
-                  ["%" + text + "%"],
-                  (_, { rows: { _array } }) => setSearch(_array)
-                );
-              });
-            } else {
-              setSearchAvaiblable(false);
-            }
-          }}
-        />
+        <View style={styles.searchBar}>
+          <Image style={styles.searchIcon} source={Search} />
+          <TextInput style={styles.input} placeholder="Buscar"
+            onChangeText={(text) => {
+              if (text.length > 0) {
+                setSearchAvaiblable(true);
+                db.transaction((tx) => {
+                  tx.executeSql(`SELECT * FROM contact WHERE name LIKE ? OR last_name LIKE ? OR number like ?;`,
+                    ["%" + text + "%", "%" + text + "%", "%" + text + "%"],
+                    (_, { rows: { _array } }) => setSearch(_array)
+                  );
+                });
+              } else {
+                setSearchAvaiblable(false);
+              }
+            }}
+          />
+        </View>
 
         <TouchableOpacity style={styles.addContact} onPress={addContact} >
           <Image style={styles.plus} source={Plus} />
@@ -230,13 +234,22 @@ const styles = StyleSheet.create({
     padding: 18,
     marginLeft: 300,
   },
+  searchIcon: {
+    width: 30,
+    height: 30,
+    position: 'absolute',
+    zIndex: 2,
+    marginTop: 15,
+    marginLeft: 15,
+  },
   input: {
     backgroundColor: '#FFF',
     width: 320,
     height: 60,
     marginLeft: 10,
     borderRadius: 10,
-    padding: 10,
+    padding: 20,
+    paddingLeft: 50,
     fontSize: 20,
     // marginTop: 30,
   },
@@ -250,5 +263,9 @@ const styles = StyleSheet.create({
     // flexDirection: 'row',
     // flex: 2,
     // flexDirection: 'row',
-  }
+  },
+  // searchBar: {
+  //   flex: 1,
+  //   flexDirection: 'row',
+  // }
 });

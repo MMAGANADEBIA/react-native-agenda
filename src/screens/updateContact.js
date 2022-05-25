@@ -131,7 +131,6 @@ export default function UpdateContact({ navigation }) {
         {contact.map(element => {
           return (
             <View key={element.id}>
-              <Text style={styles.header} key={element.name} >{element.name} {element.last_name.charAt(0)}.</Text>
               <Text style={styles.text} >Nombre</Text>
               <TextInput style={styles.input} placeholder="Nombre"
                 defaultValue={element.name}
