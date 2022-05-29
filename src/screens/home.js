@@ -41,7 +41,6 @@ export default function Home({ navigation }) {
     });
   }, [contacts]);
 
-
   return (
     <View style={styles.container}>
 
@@ -251,21 +250,10 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingLeft: 50,
     fontSize: 20,
-    // marginTop: 30,
   },
   addContact: {
     position: 'absolute',
     marginTop: 5,
     marginLeft: '80%',
   },
-  inlineElements: {
-    // flex: 1,
-    // flexDirection: 'row',
-    // flex: 2,
-    // flexDirection: 'row',
-  },
-  // searchBar: {
-  //   flex: 1,
-  //   flexDirection: 'row',
-  // }
 });

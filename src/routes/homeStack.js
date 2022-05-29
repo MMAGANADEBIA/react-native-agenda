@@ -12,8 +12,8 @@ const screens = {
       animations: {
         push: {
           waitForRender: true,
-        }
-      }
+        },
+      },
     },
     colors: {
       background: '#14191f'
@@ -23,12 +23,25 @@ const screens = {
     screen: AddContact,
     navigationOptions: {
       headerShown: false,
-    }
+      animations: {
+        push: {
+          waitForRender: true,
+        }
+      }
+    },
+    colors: {
+      background: '#14191f'
+    },
   },
   updateContact: {
     screen: UpdateContact,
     navigationOptions: {
       headerShown: false,
+      animations: {
+        push: {
+          waitForRender: true,
+        }
+      }
     },
     colors: {
       background: '#14191f'

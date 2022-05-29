@@ -4,11 +4,11 @@
     "slug": "agenda",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/contact.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/contact.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#14191f"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -21,8 +21,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/contact.png",
+        "backgroundColor": "#14191f"
       }
     },
     "web": {
