@@ -7,7 +7,6 @@ import PhoneInput from 'react-native-phone-number-input';
 import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('contacts.db');
-// const db = SQLite.openDatabase('contact.db');
 
 export default function Home({ navigation }) {
 
@@ -22,15 +21,12 @@ export default function Home({ navigation }) {
 
   const accept = () => {
     let number = formattedValue;
+    let regex = /[./,/-/ ]/
     if (name != "" && lastName != "") {
-      if (value.length == 10) {
-        setValid(true);
+      if (value.length == 10 && !value.match(regex)) {
         navigation.navigate('Home')
         db.transaction((tx) => {
           tx.executeSql('INSERT INTO contact(name, last_name, number, short_number) values (?, ?, ?, ?);', [name, lastName, number, value]);
-          tx.executeSql('SELECT * FROM contact;', [], (_, { rows }) => {
-            console.log(JSON.stringify(rows._array[0].name))
-          })
         })
       } else {
         setValid(false);
@@ -119,11 +115,14 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#FFF',
-    width: 300,
+    // width: 300,
+    width: '82%',
     height: 60,
-    marginLeft: 70,
+    // marginLeft: 70,
+    marginLeft: '8%',
     borderRadius: 10,
     padding: 10,
+    paddingLeft: 15,
     fontSize: 20
   },
   textInputStyle: {
@@ -131,9 +130,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   containerStyle: {
-    marginLeft: 70,
+    // marginLeft: 70,
+    marginLeft: '8%',
     height: 60,
-    width: 300,
+    // width: 300,
+    width: '82%',
     borderRadius: 10,
   },
   textContainerStyle: {
@@ -145,7 +146,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#FFF',
-    marginLeft: 70,
+    // marginLeft: 70,
+    marginLeft: '8%',
     marginTop: 20,
     fontSize: 20,
   },
@@ -153,10 +155,6 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 20,
   },
-  // form: {
-  //   flex: 1,
-
-  // },
   button: {
     width: 150,
     height: 60,

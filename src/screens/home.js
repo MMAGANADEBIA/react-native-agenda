@@ -28,7 +28,7 @@ export default function Home({ navigation }) {
       tx.executeSql(
         'CREATE TABLE IF NOT EXISTS contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, last_name TEXT NOT NULL, number TEXT NOT NULL, short_number TEXT NOT NULL);')
     })
-
+    //Delete database and create it again.
   }
 
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function Home({ navigation }) {
                     <Image style={styles.image} source={Edit} />
                   </TouchableOpacity>
 
-                  <TouchableOpacity onPress={() => {
+                  <TouchableOpacity style={styles.delete} onPress={() => {
                     Alert.alert(
                       "¿Seguro?",
                       `¿Quieres eliminar a ${element.name}?`,
@@ -189,9 +189,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    paddingTop: 50,
+    paddingTop: '12%',
     backgroundColor: '#14191f',
   },
   text: {
@@ -228,10 +226,12 @@ const styles = StyleSheet.create({
   },
   icons: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    // justifyContent: 'flex-end',
+    justifyContent: 'space-around',
     position: 'absolute',
     padding: 18,
-    marginLeft: 300,
+    // marginLeft: 300,
+    marginLeft: '75%',
   },
   searchIcon: {
     width: 30,
@@ -239,21 +239,26 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 2,
     marginTop: 15,
-    marginLeft: 15,
+    // marginLeft: 15,
+    marginLeft: 20,
   },
   input: {
     backgroundColor: '#FFF',
-    width: 320,
+    // width: 320,
+    width: '75%',
     height: 60,
     marginLeft: 10,
     borderRadius: 10,
-    padding: 20,
-    paddingLeft: 50,
+    // padding: 20,
+    paddingLeft: 55,
     fontSize: 20,
   },
   addContact: {
     position: 'absolute',
     marginTop: 5,
     marginLeft: '80%',
+  },
+  delete: {
+    marginLeft: 30,
   },
 });

@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/contact.png",
         "backgroundColor": "#14191f"
-      }
+      },
+      "package": "com.mm.contactOSS"
     },
     "web": {
       "favicon": "./assets/favicon.png"

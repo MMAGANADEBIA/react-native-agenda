@@ -222,11 +222,14 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#FFF',
-    width: 300,
+    // width: 300,
+    width: '82%',
     height: 60,
-    marginLeft: 70,
+    // marginLeft: 70,
+    marginLeft: '8%',
     borderRadius: 10,
     padding: 10,
+    paddingLeft: 15,
     fontSize: 20
   },
   textInputStyle: {
@@ -234,9 +237,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   containerStyle: {
-    marginLeft: 70,
+    // marginLeft: 70,
+    marginLeft: '8%',
     height: 60,
-    width: 300,
+    // width: 300,
+    width: '82%',
     borderRadius: 10,
   },
   textContainerStyle: {
@@ -248,7 +253,8 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#FFF',
-    marginLeft: 70,
+    // marginLeft: 70,
+    marginLeft: '8%',
     marginTop: 20,
     fontSize: 20,
   },
