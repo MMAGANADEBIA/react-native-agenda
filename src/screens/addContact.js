@@ -21,14 +21,19 @@ export default function Home({ navigation }) {
 
   const accept = () => {
     let number = formattedValue;
+    //Regular expression to clean number input values.
     let regex = /[./,/-/ ]/
+    //Check name and last name are not empty.
     if (name != "" && lastName != "") {
+      //Check number has 10 digits and the number are clean.
       if (value.length == 10 && !value.match(regex)) {
+        //Navigate back to home and insert the new contact into the database.
         navigation.navigate('Home')
         db.transaction((tx) => {
           tx.executeSql('INSERT INTO contact(name, last_name, number, short_number) values (?, ?, ?, ?);', [name, lastName, number, value]);
         })
       } else {
+        //If number are not clean and does not have 10 digits, alert it.
         setValid(false);
         Alert.alert(
           "Número inválido",
@@ -36,6 +41,7 @@ export default function Home({ navigation }) {
         )
       }
     } else {
+      //If name and last name are empty.
       Alert.alert(
         "Campos vacíos",
         "Llene los campos con datos válidos",
@@ -44,12 +50,14 @@ export default function Home({ navigation }) {
 
   }
 
+  //Go home if cancel.
   const cancel = () => {
     navigation.goBack();
   }
 
   return (
     <ScrollView style={styles.container}>
+      {/*Form with inputs like name, last name and number.*/}
       <Text style={styles.header}>Nuevo Contacto</Text>
       <View style={styles.usableScreen}>
         <View style={styles.form}>
@@ -66,6 +74,7 @@ export default function Home({ navigation }) {
             }}
           />
           <Text style={styles.text}>Número</Text>
+          {/*Phone input allows you select and country and her number prefix.*/}
           <PhoneInput
             defaultCode="MX"
             defaultValue={value}
@@ -87,6 +96,7 @@ export default function Home({ navigation }) {
           />
 
         </View>
+        {/*Cancel and accept buttons.*/}
         <View style={styles.buttonsContainer}>
           <TouchableOpacity style={[styles.button, styles.cancel]} onPress={cancel}>
             <Text style={styles.buttonText}>Cancelar</Text>

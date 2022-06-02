@@ -1,36 +1,44 @@
+//Import and style of status bar.
 import { StatusBar } from 'react-native';
 StatusBar.setBarStyle('light-contect', true);
 StatusBar.setBackgroundColor('#14191f');
+//Import modules necessary.
 import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useEffect, useState } from 'react';
+import Toast from 'react-native-simple-toast';
+import { TextInput } from 'react-native-gesture-handler';
+import * as Clipboard from 'expo-clipboard';
+//Import of images and icons.
 import Trash from '../icons/trash-bin.png';
 import Edit from '../icons/pluma-de-la-pluma.png';
 import Plus from '../icons/plus.png';
 import Search from '../icons/search.png';
-import { TextInput } from 'react-native-gesture-handler';
-import * as Clipboard from 'expo-clipboard';
-import Toast from 'react-native-simple-toast';
 
+//Open slqite database.
 const db = SQLite.openDatabase('contacts.db');
 
 export default function Home({ navigation }) {
+  //Variables with data to show.
   const [contacts, setContacts] = useState([]);
   const [search, setSearch] = useState([]);
   const [searchAvailable, setSearchAvaiblable] = useState(false);
 
+  //Function to navigate into other screens.
   const addContact = () => {
     navigation.navigate('addContact')
   }
 
+  //Create the database table in case this does not exist.
+  //Table used to save the contacts data.
   const createTableIfNotExist = () => {
     db.transaction((tx) => {
       tx.executeSql(
         'CREATE TABLE IF NOT EXISTS contact(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, last_name TEXT NOT NULL, number TEXT NOT NULL, short_number TEXT NOT NULL);')
     })
-    //Delete database and create it again.
   }
 
+  //Getting all the contacts and set it to the setContact variable.
   useEffect(() => {
     createTableIfNotExist();
     db.transaction((tx) => {
@@ -44,10 +52,12 @@ export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
 
+      {/*Search bar and plus icon to add contact.*/}
       <View styles={styles.inlineElements}>
 
         <View style={styles.searchBar}>
           <Image style={styles.searchIcon} source={Search} />
+          {/*Get data from the database while you type and set the data.*/}
           <TextInput style={styles.input} placeholder="Buscar"
             onChangeText={(text) => {
               if (text.length > 0) {
@@ -71,6 +81,7 @@ export default function Home({ navigation }) {
 
       </View>
 
+      {/*List searched elements while type in the search bar.*/}
       <View style={styles.listContainer} >
         {search.map(element => {
           if (searchAvailable) {
@@ -126,6 +137,7 @@ export default function Home({ navigation }) {
         })}
       </View>
 
+      {/*Show all elements in the database while not typing.*/}
       <View style={styles.listContainer}>
         {contacts.map(element => {
           if (!searchAvailable) {
@@ -159,6 +171,7 @@ export default function Home({ navigation }) {
                         {
                           text: "Aceptar", onPress: () => {
                             console.log("Aceptar")
+                            //delete a database element when touch the trash icon.
                             db.transaction((tx) => {
                               tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
                               tx.executeSql("SELECT * FROM contact;",

@@ -1,12 +1,16 @@
+//Import and style statusbar.
 import { StatusBar, Alert } from 'react-native';
 StatusBar.setBarStyle('light-contect', true);
 StatusBar.setBackgroundColor('#14191f'); import * as SQLite from 'expo-sqlite'; import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+//Import necessary modules.
 import PhoneInput from 'react-native-phone-number-input';
 import React, { useState, useRef, useEffect } from 'react';
 
+//Open databse connection.
 const db = SQLite.openDatabase('contacts.db');
 
 export default function UpdateContact({ navigation }) {
+  //Variables to save values of new and old data contact.
   const [value, setValue] = useState([]);
   const [contact, setContact] = useState([]);
   const [formattedValue, setFormattedValue] = useState([]);
@@ -15,13 +19,15 @@ export default function UpdateContact({ navigation }) {
   const phoneInput = useRef < PhoneInput > (null);
   const id = navigation.state.params.id;
 
-
+  //Navigate back home when cancel.
   const cancel = () => {
-    // navigation.goBack();
-    navigation.navigate('Home')
+    navigation.goBack();
   }
 
-
+  //If you hit the accept button, alert the user if really want to
+  //update the contact data.
+  //I user want to update, then check each field and if one aren't update
+  //then set the old data.
   const accept = () => {
     let number = formattedValue;
     let shortNumber = value;
@@ -102,17 +108,16 @@ export default function UpdateContact({ navigation }) {
 
             })
 
+            //After accept, go home.
             navigation.navigate('Home');
 
           }
         }
       ]
     )
-
-
   }
 
-
+  //Get the one user data to update.
   useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql("SELECT * FROM contact WHERE id = ?;",
@@ -129,6 +134,7 @@ export default function UpdateContact({ navigation }) {
         <Text style={styles.header}>Editar contacto</Text>
 
         {contact.map(element => {
+          //Render the inputs with the data to update like default value.
           return (
             <View key={element.id}>
               <Text style={styles.text} >Nombre</Text>
@@ -171,6 +177,7 @@ export default function UpdateContact({ navigation }) {
         <View style={styles.usableScreen}>
           <View style={styles.form}>
 
+            {/*Buttons to cancel or update.*/}
           </View>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={[styles.button, styles.cancel]} onPress={cancel}>
