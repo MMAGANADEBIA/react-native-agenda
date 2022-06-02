@@ -114,7 +114,6 @@ export default function Home({ navigation }) {
                         },
                         {
                           text: "Aceptar", onPress: () => {
-                            console.log("Aceptar")
                             db.transaction((tx) => {
                               tx.executeSql('DELETE FROM contact WHERE id = ?;', [element.id]);
                               tx.executeSql("SELECT * FROM contact;",
@@ -252,8 +251,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 2,
     marginTop: 15,
-    // marginLeft: 15,
-    marginLeft: 20,
+    marginLeft: 16,
   },
   input: {
     backgroundColor: '#FFF',

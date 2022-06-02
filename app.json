@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "agenda",
-    "slug": "agenda",
-    "version": "1.0.0",
+    "name": "Agenda",
+    "slug": "Agenda",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/contact.png",
     "splash": {
