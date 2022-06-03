@@ -23,9 +23,9 @@ Simple react native agenda app.
 - Available on release page in this repository.
 
 ## Screenshots
-![screenshot](./screenshots/Screenshot_20220602-225341.png "screenshot")
-![screenshot](./screenshots/Screenshot_20220602-225456.png "screenshot")
-![screenshot](./screenshots/Screenshot_20220602-225510.png "screenshot")
-![screenshot](./screenshots/Screenshot_20220602-225520.png "screenshot")
-![screenshot](./screenshots/Screenshot_20220602-225537.png "screenshot")
-![screenshot](./screenshots/Screenshot_20220602-225554.png "screenshot")
+![screenshot](./screenshots/Screenshot_20220602-225341.png)
+![screenshot](./screenshots/Screenshot_20220602-225456.png)
+![screenshot](./screenshots/Screenshot_20220602-225510.png)
+![screenshot](./screenshots/Screenshot_20220602-225520.png)
+![screenshot](./screenshots/Screenshot_20220602-225537.png)
+![screenshot](./screenshots/Screenshot_20220602-225554.png)
