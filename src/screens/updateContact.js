@@ -94,6 +94,8 @@ export default function UpdateContact({ navigation }) {
                     ]);
                   }
                 )
+                //Navigate to home after update some data.
+                //This navigation is in case number are not updated.
                 navigation.navigate('Home');
               } else if (shortNumber.length === 10 && !shortNumber.match(regex)) {
                 db.transaction(
@@ -105,6 +107,7 @@ export default function UpdateContact({ navigation }) {
                     ]);
                   }
                 )
+                //Navigate to home after update the new data.
                 navigation.navigate('Home');
               } else {
                 Alert.alert(
@@ -113,8 +116,6 @@ export default function UpdateContact({ navigation }) {
                 )
               }
             })
-            //After accept, go home.
-            // navigation.navigate('Home');
           }
         }
       ]
