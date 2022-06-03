@@ -31,6 +31,7 @@ export default function UpdateContact({ navigation }) {
   const accept = () => {
     let number = formattedValue;
     let shortNumber = value;
+    let regex = /[./,/\-/ ]/
     Alert.alert(
       "¿Actualizar?",
       "Los datos modificados serán actualizados. Esta acción es irreversible.",
@@ -93,7 +94,8 @@ export default function UpdateContact({ navigation }) {
                     ]);
                   }
                 )
-              } else if (shortNumber.length == 10) {
+                navigation.navigate('Home');
+              } else if (shortNumber.length === 10 && !shortNumber.match(regex)) {
                 db.transaction(
                   (tx) => {
                     tx.executeSql(`UPDATE contact SET number = ?, short_number = ? WHERE id = ?;`, [
@@ -103,14 +105,16 @@ export default function UpdateContact({ navigation }) {
                     ]);
                   }
                 )
+                navigation.navigate('Home');
+              } else {
+                Alert.alert(
+                  "Número inválido",
+                  "El número debe de tener 10 dígitos",
+                )
               }
-
-
             })
-
             //After accept, go home.
-            navigation.navigate('Home');
-
+            // navigation.navigate('Home');
           }
         }
       ]

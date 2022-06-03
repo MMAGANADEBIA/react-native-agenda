@@ -22,7 +22,7 @@ export default function Home({ navigation }) {
   const accept = () => {
     let number = formattedValue;
     //Regular expression to clean number input values.
-    let regex = /[./,/-/ ]/
+    let regex = /[./,/\-/ ]/
     //Check name and last name are not empty.
     if (name != "" && lastName != "") {
       //Check number has 10 digits and the number are clean.
